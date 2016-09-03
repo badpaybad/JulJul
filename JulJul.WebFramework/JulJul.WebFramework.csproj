@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FD85D91C-D7EF-444D-B52E-42B025E76B12}</ProjectGuid>
+    <ProjectGuid>{900E8299-8C7B-4BE7-B561-37A7862BA455}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>JulJul.Core</RootNamespace>
-    <AssemblyName>JulJul.Core</AssemblyName>
+    <RootNamespace>JulJul.WebFramework</RootNamespace>
+    <AssemblyName>JulJul.WebFramework</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,18 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="StackExchange.Redis, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\StackExchange.Redis.1.1.603\lib\net45\StackExchange.Redis.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,31 +41,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractDetails.cs" />
-    <Compile Include="Domain\Content.cs" />
-    <Compile Include="Domain\DomainExtensions.cs" />
-    <Compile Include="Domain\UserDetails.cs" />
-    <Compile Include="AbstractEntity.cs" />
-    <Compile Include="Domain\User.cs" />
-    <Compile Include="Expressions\ExpressionOrderBy.cs" />
-    <Compile Include="Expressions\ExpressionPaging.cs" />
-    <Compile Include="Expressions\ExpressionSelection.cs" />
-    <Compile Include="Expressions\ExpressionViewPaging.cs" />
-    <Compile Include="Expressions\ExpressionWhere.cs" />
-    <Compile Include="IEntity.cs" />
+    <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Redis\RedisConfig.cs" />
-    <Compile Include="Redis\RedisConnectionPool.cs" />
-    <Compile Include="IRepository.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Distributed\" />
-    <Folder Include="Model\" />
-    <Folder Include="OAuth\" />
+    <ProjectReference Include="..\JulJul.Core\JulJul.Core.csproj">
+      <Project>{fd85d91c-d7ef-444d-b52e-42b025e76b12}</Project>
+      <Name>JulJul.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JulJul.Services\JulJul.Services.csproj">
+      <Project>{75148577-260c-4363-91a7-91d04aaddd40}</Project>
+      <Name>JulJul.Services</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
+    <Folder Include="Contnent\" />
+    <Folder Include="Controller\" />
+    <Folder Include="Views\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

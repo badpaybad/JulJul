@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Entity;
 using JulJul.Core.Domain;
 
-namespace JulJul.Core
+namespace JulJul.Repository.Ef6
 {
     public class EfDbContext:DbContext
     {
@@ -16,5 +11,6 @@ namespace JulJul.Core
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Content> Contents { get; set; }
     }
 }

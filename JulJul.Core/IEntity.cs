@@ -6,5 +6,8 @@ namespace JulJul.Core
     {
         [Key]
         long Id { get; set; }
+
+        string EntityName();
+        string GetEntityName();
     }
 }

@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using JulJul.Core.Domain;
 
-namespace JulJul.Core.Repository
+namespace JulJul.Core.Domain
 {
-   public interface IUserRepository:IRepository<User>
+    public static class DomainExtensions
     {
     }
 }

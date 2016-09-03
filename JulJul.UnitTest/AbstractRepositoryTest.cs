@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using JulJul.Core;
 using JulJul.Core.Domain;
 using JulJul.Core.Expressions;
-using JulJul.Core.Repository;
+using JulJul.Repository;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;

@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Linq.Expressions;
+using JulJul.Core;
 using JulJul.Core.Expressions;
 
-namespace JulJul.Core
+namespace JulJul.Repository.Ef6
 {
     public abstract class EfAbstractRepository<T> : IRepository<T> where T : AbstractEntity, new()
     {
