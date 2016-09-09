@@ -10,8 +10,8 @@ namespace JulJul.Core.Domain
     [Table("Content")]
     public class Content : AbstractEntity
     {
-        public long EntityId { get; set; }
-        public long LanguageId { get; set; }
+        public Guid EntityId { get; set; }
+        public Guid LanguageId { get; set; }
         public string Entity { get; set; }
         public string Field { get; set; }
         public string Value { get; set; }

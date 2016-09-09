@@ -20,11 +20,11 @@ namespace JulJul.Services
         }
 
 
-        public long CreateOrEdit<TEntity, TView>(TEntity entity, long languageId, Dictionary<string, string> contentLanguages) 
-            where TEntity : IEntity,new() where TView : AbstractDetails<TEntity, TView>, new()
+        public long CreateOrEdit<TEntity, TView>(TEntity entity, Guid languageId, Dictionary<string, string> contentLanguages)
+            where TEntity : IEntity, new() where TView : AbstractDetails<TEntity, TView>, new()
         {
-            if (entity.Id == 0) throw new Exception("Id not assigned. Must be Id>0");
-            if (languageId == 0) throw new Exception("LanguageId not assigned. Must be LanguageId>0");
+            if (entity.Id == Guid.Empty) throw new Exception("Id not assigned. Must be Id>0");
+            if (languageId == Guid.Empty) throw new Exception("LanguageId not assigned. Must be LanguageId>0");
 
             var entityName = entity.GetEntityName();
 
@@ -40,8 +40,8 @@ namespace JulJul.Services
             var entity = fromView.ConvertToEntity(out contentLanguages);
             var entityName = entity.GetEntityName();
 
-            if (fromView.Id == 0 || entity.Id == 0) throw new Exception("Id not assigned. Must be Id>0");
-            if (fromView.LanguageId == 0) throw new Exception("LanguageId not assigned. Must be LanguageId>0");
+            if (fromView.Id == Guid.Empty || entity.Id == Guid.Empty) throw new Exception("Id not assigned. Must be Id>0");
+            if (fromView.LanguageId == Guid.Empty) throw new Exception("LanguageId not assigned. Must be LanguageId>0");
             
             AddOrUpdateMultiLang(fromView.LanguageId, entityName, entity.Id, contentLanguages);
 
@@ -56,15 +56,15 @@ namespace JulJul.Services
             var entity = fromView.ConvertToEntity(out contentLanguages);
             var entityName = entity.GetEntityName();
 
-            if (fromView.Id == 0 || entity.Id == 0) throw new Exception("Id not assigned. Must be Id>0");
-            if (fromView.LanguageId == 0) throw new Exception("LanguageId not assigned. Must be LanguageId>0");
+            if (fromView.Id == Guid.Empty || entity.Id == Guid.Empty) throw new Exception("Id not assigned. Must be Id>0");
+            if (fromView.LanguageId == Guid.Empty) throw new Exception("LanguageId not assigned. Must be LanguageId>0");
 
             AddOrUpdateMultiLang(fromView.LanguageId, entityName, entity.Id, contentLanguages, true);
 
             return contentLanguages.Count;
         }
 
-        public List<Content> GetForEntity(string entityName, long entityId, long languageId)
+        public List<Content> GetForEntity(string entityName, Guid entityId, Guid languageId)
         {
             if (string.IsNullOrEmpty(entityName)) throw new ArgumentNullException(nameof(entityName));
 
@@ -72,13 +72,13 @@ namespace JulJul.Services
                                            && i.Entity.Equals(entityName, StringComparison.OrdinalIgnoreCase))).ToList();
         }
 
-        public List<Content> GetForEntity(Type type, long entityId, long languageId)
+        public List<Content> GetForEntity(Type type, Guid entityId, Guid languageId)
         {
             var entityName = type.Name;
             return GetForEntity(entityName, entityId, languageId);
         }
 
-        public List<Content> GetForEntity(IEntity entity, long languageId)
+        public List<Content> GetForEntity(IEntity entity, Guid languageId)
         {
             if (entity == null) throw new ArgumentNullException(nameof(entity));
 
@@ -87,10 +87,10 @@ namespace JulJul.Services
                                          && i.Entity.Equals(entityName, StringComparison.OrdinalIgnoreCase))).ToList();
         }
 
-        public void AddOrUpdateMultiLang(long languageId, string entityName, long entityId,
+        public void AddOrUpdateMultiLang(Guid languageId, string entityName, Guid entityId,
             Dictionary<string, string> contentLanguages, bool deleted = false)
         {
-            if (entityId == 0 || languageId == 0)
+            if (entityId == Guid.Empty || languageId ==Guid.Empty)
                 throw new Exception("Id and LanguageId not assigned. Must be entityId>0 and languageId>0");
 
             var inDb =

@@ -138,6 +138,7 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -158,17 +159,13 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Controllers\" />
     <Folder Include="Models\" />
+    <Folder Include="Views\User\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\JulJul.Core\JulJul.Core.csproj">
       <Project>{fd85d91c-d7ef-444d-b52e-42b025e76b12}</Project>
       <Name>JulJul.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\JulJul.Services\JulJul.Services.csproj">
-      <Project>{75148577-260c-4363-91a7-91d04aaddd40}</Project>
-      <Name>JulJul.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\JulJul.WebFramework\JulJul.WebFramework.csproj">
       <Project>{900e8299-8c7b-4be7-b561-37a7862ba455}</Project>

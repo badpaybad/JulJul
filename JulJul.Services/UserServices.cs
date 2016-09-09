@@ -28,7 +28,7 @@ namespace JulJul.Services
           _contentServices.CreateOrEdit(userDetails);
       }
 
-      public IEnumerable<UserDetails> GetAll(long languageId)
+      public IEnumerable<UserDetails> GetAll(Guid languageId)
       {
           var temp = _repository.SelectAll()
               .Select(i => new UserDetails().BindEntityAndContent(i, _contentServices.GetForEntity(i, languageId),languageId));

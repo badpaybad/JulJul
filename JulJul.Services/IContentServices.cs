@@ -8,7 +8,7 @@ namespace JulJul.Services
     public interface IContentServices
     {
 
-        long CreateOrEdit<TEntity, TView>(TEntity entity, long languageId, Dictionary<string, string> contentLanguages)
+        long CreateOrEdit<TEntity, TView>(TEntity entity, Guid languageId, Dictionary<string, string> contentLanguages)
             where TEntity : IEntity, new() where TView : AbstractDetails<TEntity, TView>, new();
 
         long CreateOrEdit<TEntity, TView>(AbstractDetails<TEntity, TView> fromView)
@@ -17,12 +17,12 @@ namespace JulJul.Services
         long Delete<TEntity, TView>(AbstractDetails<TEntity, TView> fromView)
             where TEntity : IEntity, new() where TView : AbstractDetails<TEntity, TView>, new();
 
-        List<Content> GetForEntity(string entityName, long entityId, long languageId);
-        List<Content> GetForEntity(Type type, long entityId, long languageId);
+        List<Content> GetForEntity(string entityName, Guid entityId, Guid languageId);
+        List<Content> GetForEntity(Type type, Guid entityId, Guid languageId);
 
-        List<Content> GetForEntity(IEntity entity, long languageId);
+        List<Content> GetForEntity(IEntity entity, Guid languageId);
 
-        void AddOrUpdateMultiLang(long languageId, string entityName, long entityId,
+        void AddOrUpdateMultiLang(Guid languageId, string entityName, Guid entityId,
             Dictionary<string, string> contentLanguages, bool deleted = false);
     }
 }

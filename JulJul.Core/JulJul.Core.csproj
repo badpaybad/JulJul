@@ -51,6 +51,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AbstractDetails.cs" />
+    <Compile Include="Distributed\DistributedDbCommand.cs" />
+    <Compile Include="Distributed\DistributedDbCommandType.cs" />
+    <Compile Include="Distributed\DistributedEntityDetailsCommand.cs" />
+    <Compile Include="Distributed\DistributedServices.cs" />
     <Compile Include="Domain\Content.cs" />
     <Compile Include="Domain\DomainExtensions.cs" />
     <Compile Include="Domain\UserDetails.cs" />
@@ -68,7 +72,6 @@
     <Compile Include="IRepository.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Distributed\" />
     <Folder Include="Model\" />
     <Folder Include="OAuth\" />
   </ItemGroup>

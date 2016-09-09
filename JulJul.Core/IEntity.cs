@@ -1,13 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace JulJul.Core
 {
     public interface IEntity
     {
         [Key]
-        long Id { get; set; }
+        Guid Id { get; set; }
 
-        string EntityName();
+     
         string GetEntityName();
+        string GetChannelKey();
     }
 }

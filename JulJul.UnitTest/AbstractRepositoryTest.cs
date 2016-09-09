@@ -31,7 +31,7 @@ namespace JulJul.UnitTest
             var repo=new UserRepository();
 
             long total;
-          var xxx=  repo.SelectBy(new ExpressionWhere<User>(i=>i.Id>0), 
+          var xxx=  repo.SelectBy(new ExpressionWhere<User>(i=>true), 
            new ExpressionOrderBy<User,string>(i=>i.Username,true) , 0,10,out total);
 
             Console.WriteLine(JsonConvert.SerializeObject(xxx));
@@ -44,7 +44,7 @@ namespace JulJul.UnitTest
 
             long total;
             var xxx = repo.SelectViewBy(new ExpressionSelection<User, Account>(i=>new Account() {})
-                , new ExpressionOrderBy<User, long>(i => i.Id, true), new ExpressionWhere<User>(i=>i.Id>0),0,1,out total );
+                , new ExpressionOrderBy<User, Guid>(i => i.Id, true), new ExpressionWhere<User>(i=>true),0,1,out total );
 
             Console.WriteLine(JsonConvert.SerializeObject(xxx));
             Console.WriteLine(JsonConvert.SerializeObject(total));
@@ -56,7 +56,7 @@ namespace JulJul.UnitTest
 
             long total;
             var xxx = repo.Paging(new ExpressionViewPaging<User, Account,  string>(
-                take:1, order:i=>i.Password, where:i=>i.Id>0,
+                take:1, order:i=>i.Password, where:i=>true,
                 isDesc:true, skip:1, selection:i=>new Account()
                 {
                     MatKhau=i.Password,

@@ -17,7 +17,7 @@ namespace JulJul.Repository.Ef6
             }
         }
 
-        public T Select(long id)
+        public T Select(Guid id)
         {
             using (var db = new EfDbContext())
             {
@@ -222,7 +222,7 @@ namespace JulJul.Repository.Ef6
             return TryDelete(entity.Id);
         }
 
-        public bool TryDelete(long id)
+        public bool TryDelete(Guid id)
         {
             using (var db = new EfDbContext())
             {

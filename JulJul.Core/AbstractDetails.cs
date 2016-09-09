@@ -8,8 +8,8 @@ namespace JulJul.Core
 {
     public abstract class AbstractDetails<T,TView> where T :IEntity,new() where TView:AbstractDetails<T,TView>
     {
-        public virtual long Id { get; set; }
-        public long LanguageId { get; set; }
+        public virtual Guid Id { get; set; }
+        public Guid LanguageId { get; set; }
 
         public T ConvertToEntity()
         {
@@ -142,7 +142,7 @@ namespace JulJul.Core
             return (TView)this;
         }
 
-        public TView BindEntityAndContent(IEntity entity, List<Content> langs, long languageId)
+        public TView BindEntityAndContent(IEntity entity, List<Content> langs, Guid languageId)
         {
             langs = langs ?? new List<Content>();
 
@@ -190,5 +190,9 @@ namespace JulJul.Core
             return obj;
         }
 
+        public string GetChannelKey()
+        {
+            return this.GetType().FullName;
+        }
     }
 }

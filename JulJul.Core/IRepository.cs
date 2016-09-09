@@ -8,7 +8,7 @@ namespace JulJul.Core
     public interface IRepository<T> where T : class, IEntity
     {
         IEnumerable<T> SelectAll();
-        T Select(long id);
+        T Select(Guid id);
         T SelectSingle(ExpressionWhere<T> whereExpression);
 
         IEnumerable<T> SelectBy(ExpressionWhere<T> whereExpression);
@@ -26,11 +26,11 @@ namespace JulJul.Core
             int skip, int take, out long total);
 
         IEnumerable<TView> Paging<TView, TKey>(ExpressionViewPaging<T, TView, TKey> expression, out long total); 
-        IEnumerable<T> Paging<TKey>(ExpressionPaging<T, TKey> expression, out long total); 
+        IEnumerable<T> Paging<TKey>(ExpressionPaging<T, TKey> expression, out long total);
 
         bool TryInsert(T entity);
         bool TryUpdate(T entity);
         bool TryDelete(T entity);
-        bool TryDelete(long id);
+        bool TryDelete(Guid id);
     }
 }
