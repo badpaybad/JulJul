@@ -1,12 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using JulJul.Core.Distributed;
 using JulJul.Core.Expressions;
 
 namespace JulJul.Core
 {
-    public interface IRepository<T> where T : class, IEntity
+    public interface IRepositoryRegisterSubcribeChange
     {
+        DistributedServices DistributedServices { get; set; }
+        void RegisterSubcribeChange(DistributedServices distributedServices);
+    }
+    public interface IRepository<T>:IRepositoryRegisterSubcribeChange where T : class, IEntity
+    {
+       
         IEnumerable<T> SelectAll();
         T Select(Guid id);
         T SelectSingle(ExpressionWhere<T> whereExpression);
@@ -28,9 +35,9 @@ namespace JulJul.Core
         IEnumerable<TView> Paging<TView, TKey>(ExpressionViewPaging<T, TView, TKey> expression, out long total); 
         IEnumerable<T> Paging<TKey>(ExpressionPaging<T, TKey> expression, out long total);
 
-        bool TryInsert(T entity);
-        bool TryUpdate(T entity);
-        bool TryDelete(T entity);
-        bool TryDelete(Guid id);
+        //bool TryInsert(T entity);
+        //bool TryUpdate(T entity);
+        //bool TryDelete(T entity);
+        //bool TryDelete(Guid id);
     }
 }

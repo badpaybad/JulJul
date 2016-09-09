@@ -3,12 +3,38 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using JulJul.Core;
+using JulJul.Core.Distributed;
 using JulJul.Core.Expressions;
 
 namespace JulJul.Repository.Ef6
 {
     public abstract class EfAbstractRepository<T> : IRepository<T> where T : AbstractEntity, new()
     {
+        public DistributedServices DistributedServices { get; set; }
+
+        public void RegisterSubcribeChange(DistributedServices distributedServices)
+        {
+            DistributedServices = distributedServices;
+
+            DistributedServices.DbSubcribe<T>((channel, cmd) =>
+            {
+                switch (cmd.CommandType)
+                {
+                        case DistributedDbCommandType.Add:
+                        TryInsert(cmd.Data);
+                        break;
+                        case DistributedDbCommandType.Update:
+                        TryUpdate(cmd.Data);
+                        break;
+                        case DistributedDbCommandType.Delete:
+                        TryUpdate(cmd.Data);
+                        break;
+                        case DistributedDbCommandType.None:
+                        break;
+                }
+            });
+        }
+
         public IEnumerable<T> SelectAll()
         {
             using (var db = new EfDbContext())
@@ -189,7 +215,7 @@ namespace JulJul.Repository.Ef6
             }
         }
 
-        public bool TryInsert(T entity)
+        protected bool TryInsert(T entity)
         {
             using (var db = new EfDbContext())
             {
@@ -199,7 +225,7 @@ namespace JulJul.Repository.Ef6
             }
         }
 
-        public bool TryUpdate(T entity)
+        protected bool TryUpdate(T entity)
         {
             using (var db = new EfDbContext())
             {
@@ -217,12 +243,12 @@ namespace JulJul.Repository.Ef6
             }
         }
 
-        public bool TryDelete(T entity)
+        protected bool TryDelete(T entity)
         {
             return TryDelete(entity.Id);
         }
 
-        public bool TryDelete(Guid id)
+        protected bool TryDelete(Guid id)
         {
             using (var db = new EfDbContext())
             {

@@ -4,15 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FD85D91C-D7EF-444D-B52E-42B025E76B12}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{88FA420A-1E3E-477E-AB9A-0A71CB54BDC4}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>JulJul.Core</RootNamespace>
-    <AssemblyName>JulJul.Core</AssemblyName>
+    <RootNamespace>JulJul.AdminBusiness</RootNamespace>
+    <AssemblyName>JulJul.AdminBusiness</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +23,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -34,13 +36,7 @@
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="StackExchange.Redis, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\StackExchange.Redis.1.1.603\lib\net45\StackExchange.Redis.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -50,35 +46,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractDetails.cs" />
-    <Compile Include="Distributed\DistributedDbCommand.cs" />
-    <Compile Include="Distributed\DistributedDbCommandType.cs" />
-    <Compile Include="Distributed\DistributedEntityDetailsCommand.cs" />
-    <Compile Include="Distributed\DistributedServices.cs" />
-    <Compile Include="Domain\Content.cs" />
-    <Compile Include="Domain\ContentDetails.cs" />
-    <Compile Include="Domain\DomainExtensions.cs" />
-    <Compile Include="Domain\UserDetails.cs" />
-    <Compile Include="AbstractEntity.cs" />
-    <Compile Include="Domain\User.cs" />
-    <Compile Include="Expressions\ExpressionOrderBy.cs" />
-    <Compile Include="Expressions\ExpressionPaging.cs" />
-    <Compile Include="Expressions\ExpressionSelection.cs" />
-    <Compile Include="Expressions\ExpressionViewPaging.cs" />
-    <Compile Include="Expressions\ExpressionWhere.cs" />
-    <Compile Include="IEntity.cs" />
+    <Compile Include="Admin\AbstractAdminServcies.cs" />
+    <Compile Include="Admin\AdminContentServices.cs" />
+    <Compile Include="Admin\AdminServicesEngine.cs" />
+    <Compile Include="Admin\AdminUserServices.cs" />
+    <Compile Include="Admin\IAdminServciesSubscribeChange.cs" />
+    <Compile Include="Admin\IAdminServices.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Redis\RedisConfig.cs" />
-    <Compile Include="Redis\RedisConnectionPool.cs" />
-    <Compile Include="IRepository.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\" />
-    <Folder Include="OAuth\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\JulJul.Core\JulJul.Core.csproj">
+      <Project>{fd85d91c-d7ef-444d-b52e-42b025e76b12}</Project>
+      <Name>JulJul.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JulJul.Repository\JulJul.Repository.csproj">
+      <Project>{29aac6fc-9833-46d1-8d4a-c01ecec1d97a}</Project>
+      <Name>JulJul.Repository</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JulJul.Services\JulJul.Services.csproj">
+      <Project>{75148577-260c-4363-91a7-91d04aaddd40}</Project>
+      <Name>JulJul.Services</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

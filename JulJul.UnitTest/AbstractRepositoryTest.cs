@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using JulJul.Core;
+using JulJul.Core.Distributed;
 using JulJul.Core.Domain;
 using JulJul.Core.Expressions;
 using JulJul.Repository;
@@ -19,11 +21,22 @@ namespace JulJul.UnitTest
     [TestClass]
     public class AbstractRepositoryTest
     {
+
+        public AbstractRepositoryTest()
+        {
+            RepositoryEngine.Boot();
+
+        }
+      
         [TestMethod]
         public void Add()
         {
             var repo=new UserRepository();
-            repo.TryInsert(new User() { Username = "badpaybad", Password = "123456"});
+            var entity = new User() { Username = "badpaybad", Password = "123456"};
+           // DistributedServices.Instance.DbPublish(new DistributedDbCommand<User>(entity, DistributedDbCommandType.Add));
+           // repo.TryInsert(entity);
+
+            Thread.Sleep(5000);
         }
         [TestMethod]
         public void SelectWithOrder()

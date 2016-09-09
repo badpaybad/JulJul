@@ -8,7 +8,7 @@ namespace JulJul.Core
 {
     public abstract class AbstractDetails<T,TView> where T :IEntity,new() where TView:AbstractDetails<T,TView>
     {
-        public virtual Guid Id { get; set; }
+        public virtual Guid Id { get; set; } = Guid.NewGuid();
         public Guid LanguageId { get; set; }
 
         public T ConvertToEntity()

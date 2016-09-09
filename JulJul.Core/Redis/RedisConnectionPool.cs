@@ -18,6 +18,7 @@ namespace JulJul.Core.Redis
         private static object locker = new object();
         private static RedisConfig _redisConfig;
         private static bool _isbooted;
+
         public static IConnectionMultiplexer CurrentConnectionMultiplexer
         {
             get { return _connectionMultiplexer.IsConnected ? _connectionMultiplexer : GetConnection(); }
@@ -37,19 +38,26 @@ namespace JulJul.Core.Redis
         {
             lock (locker)
             {
-                _pool = new Dictionary<RedisConfig, ConnectionMultiplexer>();
-                _socketManager = new SocketManager("JulJulCore", true);
-                var configArray = ConfigurationManager.AppSettings["RedisConfig"].Split(';');
-                _redisConfig = new RedisConfig
+                try
                 {
-                    Host = configArray[0],
-                    Port = int.Parse(configArray[1]),
-                    Pwd = configArray[2]
-                };
+                    _pool = new Dictionary<RedisConfig, ConnectionMultiplexer>();
+                    _socketManager = new SocketManager("JulJulCore", true);
+                    var appSetting = ConfigurationManager.AppSettings["RedisConfig"];
+                    var configArray = appSetting.Split(';');
+                    _redisConfig = new RedisConfig
+                    {
+                        Host = configArray[0],
+                        Port = int.Parse(configArray[1]),
+                        Pwd = configArray[2]
+                    };
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
             }
-            
         }
-        
+
         public static void Boot(RedisConfig configRedisInstance = null)
         {
             if (configRedisInstance != null)

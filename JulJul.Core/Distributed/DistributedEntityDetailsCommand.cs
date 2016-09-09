@@ -18,6 +18,12 @@ namespace JulJul.Core.Distributed
             }
         }
 
+        public DistributedEntityDetailsCommand(TView data, DistributedDbCommandType cmdType)
+        {
+            Data = data;
+            CommandType = cmdType;
+        }
+
         public string ToJson()
         {
             if (Data == null) return string.Empty;
