@@ -33,25 +33,36 @@ namespace JulJul.Web.Controllers
 
         [HttpPost]
         public ActionResult Index(UserViewModel model
-            ,string btnAdd,string btnSave,string btnDelete)
+            ,string btnAdd,string btnSave,string btnDelete,string btnAddRandom)
         {
             if (!string.IsNullOrEmpty(btnAdd))
             {
-                model.User.Id= Guid.NewGuid();
-                var cmd = new DistributedEntityDetailsCommand<User,UserDetails>(
-                    model.User,DistributedDbCommandType.Add);
+                model.User.Id = Guid.NewGuid();
+                var cmd = new DistributedEntityDetailsCommand<User, UserDetails>(
+                    model.User, DistributedDbCommandType.Add, CommandBehavior.Queue);
                 ServicesEngine.DistributedServices.EntityDetailsPublish(cmd);
             }
-            if (!string.IsNullOrEmpty(btnSave))
+            else if (!string.IsNullOrEmpty(btnSave))
             {
                 var cmd = new DistributedEntityDetailsCommand<User, UserDetails>(
                     model.User, DistributedDbCommandType.Update);
                 ServicesEngine.DistributedServices.EntityDetailsPublish(cmd);
             }
-            if (!string.IsNullOrEmpty(btnDelete))
+            else if (!string.IsNullOrEmpty(btnDelete))
             {
                 var cmd = new DistributedEntityDetailsCommand<User, UserDetails>(
                     model.User, DistributedDbCommandType.Delete);
+                ServicesEngine.DistributedServices.EntityDetailsPublish(cmd);
+            }else if (!string.IsNullOrEmpty(btnAddRandom))
+            {
+                var rnd=new Random();
+                model.User.Id = Guid.NewGuid();
+                var next = rnd.Next();
+                model.User.Fullname = "Fullname_" + next;
+                model.User.Username = "Username_" + next;
+                model.User.Password = "Username_" + next;
+                var cmd = new DistributedEntityDetailsCommand<User, UserDetails>(
+                    model.User, DistributedDbCommandType.Add, CommandBehavior.Queue);
                 ServicesEngine.DistributedServices.EntityDetailsPublish(cmd);
             }
             model.List = _userServices.GetAll(LanguageId).ToList();

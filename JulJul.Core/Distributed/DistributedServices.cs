@@ -70,11 +70,13 @@ namespace JulJul.Core.Distributed
             switch (cmd.CommandBehavior)
             {
                 case CommandBehavior.Queue:
-                    _dbQueue.ListRightPush(redisChannel, redisValue);
+                    _dbQueue.ListRightPush(cmd.CommandBehavior + redisChannel, redisValue);
+                    //_dbQueue.Publish(redisChannel, redisValue);
                     _subscriber.Publish(redisChannel, redisValue);
                     break;
                 case CommandBehavior.Stack:
-                    _dbStack.ListRightPush(redisChannel, redisValue);
+                    _dbStack.ListRightPush(cmd.CommandBehavior + redisChannel, redisValue);
+                    //_dbStack.Publish(redisChannel, redisValue);
                     _subscriber.Publish(redisChannel, redisValue);
                     break;
                 default:
@@ -97,30 +99,33 @@ namespace JulJul.Core.Distributed
             _subscriberDb.Subscribe(redisChannel, (channel, value) =>
             {
                 var cmd = JsonConvert.DeserializeObject<DistributedEntityCommand<T>>(value);
-
+                bool isDone = false;
                 switch (cmd.CommandBehavior)
                 {
                     case CommandBehavior.Queue:
-                        var qv = _dbQueue.ListLeftPop(redisChannel);
+                        var qv = _dbQueue.ListLeftPop(cmd.CommandBehavior + redisChannel);
                         if (qv.HasValue)
                         {
-                            callBack(redisChannel, 
+                            callBack(redisChannel,
                                 JsonConvert.DeserializeObject<DistributedEntityCommand<T>>(qv));
+                            isDone = true;
                         }
                         break;
                     case CommandBehavior.Stack:
-                        var sv = _dbStack.ListRightPop(redisChannel);
+                        var sv = _dbStack.ListRightPop(cmd.CommandBehavior + redisChannel);
                         if (sv.HasValue)
                         {
-                            callBack(redisChannel, 
+                            callBack(redisChannel,
                                 JsonConvert.DeserializeObject<DistributedEntityCommand<T>>(sv));
+                            isDone = true;
                         }
                         break;
                     default:
                         callBack(channel, cmd);
+                        isDone = true;
                         break;
                 }
-
+                if(isDone)
                 Console.WriteLine("\r\nDbCommand:done:" + channel + "\r\n" + value);
             });
         }
@@ -141,11 +146,13 @@ namespace JulJul.Core.Distributed
             switch (cmd.CommandBehavior)
             {
                 case CommandBehavior.Queue:
-                    _dbQueue.ListRightPush(redisChannel, redisValue);
+                    _dbQueue.ListRightPush(cmd.CommandBehavior + redisChannel, redisValue);
+                    //_dbQueue.Publish(redisChannel, redisValue);
                     _subscriber.Publish(redisChannel, redisValue);
                     break;
                 case CommandBehavior.Stack:
-                    _dbStack.ListRightPush(redisChannel, redisValue);
+                    _dbStack.ListRightPush(cmd.CommandBehavior + redisChannel, redisValue);
+                    //_dbStack.Publish(redisChannel, redisValue);
                     _subscriber.Publish(redisChannel, redisValue);
                     break;
                 default:
@@ -170,30 +177,33 @@ namespace JulJul.Core.Distributed
             _subscriberDetails.Subscribe(redisChannel, (channel, value) =>
             {
                 var cmd = JsonConvert.DeserializeObject<DistributedEntityDetailsCommand<T, TView>>(value);
-
+                bool isDone=false;
                 switch (cmd.CommandBehavior)
                 {
                     case CommandBehavior.Queue:
-                        var qv = _dbQueue.ListLeftPop(redisChannel);
+                        var qv = _dbQueue.ListLeftPop(cmd.CommandBehavior + redisChannel);
                         if (qv.HasValue)
                         {
                             callBack(redisChannel,
                                 JsonConvert.DeserializeObject<DistributedEntityDetailsCommand<T, TView>>(qv));
+                            isDone = true;
                         }
                         break;
                     case CommandBehavior.Stack:
-                        var sv = _dbStack.ListRightPop(redisChannel);
+                        var sv = _dbStack.ListRightPop(cmd.CommandBehavior + redisChannel);
                         if (sv.HasValue)
                         {
                             callBack(redisChannel,
                                 JsonConvert.DeserializeObject<DistributedEntityDetailsCommand<T, TView>>(sv));
+                            isDone = true;
                         }
                         break;
                     default:
                         callBack(channel, cmd);
+                        isDone = true;
                         break;
                 }
-
+                if(isDone)
                 Console.WriteLine("\r\nFrontEndCommand:done:" + channel + "\r\n" + value);
             });
         }
@@ -212,11 +222,13 @@ namespace JulJul.Core.Distributed
             switch (cmd.CommandBehavior)
             {
                 case CommandBehavior.Queue:
-                    _dbQueue.ListRightPush(redisChannel, redisValue);
+                    _dbQueue.ListRightPush(cmd.CommandBehavior + redisChannel, redisValue);
+                    //_dbQueue.Publish(redisChannel, redisValue);
                     _subscriber.Publish(redisChannel, redisValue);
                     break;
                 case CommandBehavior.Stack:
-                    _dbStack.ListRightPush(redisChannel, redisValue);
+                    _dbStack.ListRightPush(cmd.CommandBehavior + redisChannel, redisValue);
+                    //_dbStack.Publish(redisChannel, redisValue);
                     _subscriber.Publish(redisChannel, redisValue);
                     break;
                 default:
@@ -240,30 +252,33 @@ namespace JulJul.Core.Distributed
             _subscriber.Subscribe(redisChannel, (channel, value) =>
             {
                 var cmd = JsonConvert.DeserializeObject<DistributedCommand<T>>(value);
-
+                bool isDone = false;
                 switch (cmd.CommandBehavior)
                 {
                     case CommandBehavior.Queue:
-                        var qv = _dbQueue.ListLeftPop(redisChannel);
+                        var qv = _dbQueue.ListLeftPop(cmd.CommandBehavior + redisChannel);
                         if (qv.HasValue)
                         {
-                            callBack(redisChannel, 
+                            callBack(redisChannel,
                                 JsonConvert.DeserializeObject<DistributedCommand<T>>(qv));
+                            isDone = true;
                         }
                         break;
                     case CommandBehavior.Stack:
-                        var sv = _dbStack.ListRightPop(redisChannel);
+                        var sv = _dbStack.ListRightPop(cmd.CommandBehavior + redisChannel);
                         if (sv.HasValue)
                         {
-                            callBack(redisChannel, 
+                            callBack(redisChannel,
                                 JsonConvert.DeserializeObject<DistributedCommand<T>>(sv));
+                            isDone = true;
                         }
                         break;
                     default:
                         callBack(channel, cmd);
+                        isDone = true;
                         break;
                 }
-
+                if(isDone)
                 Console.WriteLine("\r\nCommand:done:" + channel + "\r\n" + value);
             });
         }
