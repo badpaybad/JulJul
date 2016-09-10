@@ -8,8 +8,8 @@ namespace JulJul.Core
 {
     public interface IRepositoryRegisterSubcribeChange
     {
-        DistributedServices DistributedServices { get; set; }
-        void RegisterSubcribeChange(DistributedServices distributedServices);
+        IDistributedServices DistributedServices { get; set; }
+        void RegisterSubcribeChange(IDistributedServices distributedServices);
     }
     public interface IRepository<T>:IRepositoryRegisterSubcribeChange where T : class, IEntity
     {

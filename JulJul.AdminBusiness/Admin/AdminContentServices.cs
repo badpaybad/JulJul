@@ -11,7 +11,7 @@ namespace JulJul.AdminBusiness.Admin
 {
     internal class AdminContentServices: IAdminServciesSubscribeChange
     {
-        public DistributedServices DistriubtedServices { get; set; }
+        public IDistributedServices DistriubtedServices { get; set; }
 
         private IContentRepository _repository;
         public AdminContentServices(IContentRepository repository)
@@ -111,7 +111,7 @@ namespace JulJul.AdminBusiness.Admin
         }
 
       
-        public void RegisterSubscribeChange(DistributedServices distributedServices)
+        public void RegisterSubscribeChange(IDistributedServices distributedServices)
         {
             DistriubtedServices = distributedServices;
 

@@ -4,8 +4,8 @@ namespace JulJul.AdminBusiness.Admin
 {
     internal interface IAdminServciesSubscribeChange
     {
-        DistributedServices DistriubtedServices { get; set; }
-        void RegisterSubscribeChange(DistributedServices distributedServices);
+        IDistributedServices DistriubtedServices { get; set; }
+        void RegisterSubscribeChange(IDistributedServices distributedServices);
      
     }
 }

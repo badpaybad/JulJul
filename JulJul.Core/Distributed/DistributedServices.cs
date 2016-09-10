@@ -5,7 +5,22 @@ using StackExchange.Redis;
 
 namespace JulJul.Core.Distributed
 {
-    public class DistributedServices
+    public interface IDistributedServices
+    {
+        void EntitySubcribe<T>(Action<string, DistributedEntityCommand<T>> callBack) where T : IEntity;
+        void EntityPublish<T>(DistributedEntityCommand<T> cmd) where T : IEntity;
+
+        void EntityDetailsPublish<T, TView>(DistributedEntityDetailsCommand<T, TView> cmd)
+            where T : IEntity, new() where TView : AbstractDetails<T, TView>;
+
+        void EntityDetailsSubcribe<T, TView>(Action<string, DistributedEntityDetailsCommand<T, TView>> callBack)
+            where T : IEntity, new() where TView : AbstractDetails<T, TView>;
+
+        void Publish<T>(DistributedCommand<T> cmd) where T : class;
+        void Subscribe<T>(Action<string, DistributedCommand<T>> callBack) where T : class;
+
+    }
+    public class DistributedServices: IDistributedServices
     {
         //static DistributedServices _instance = new DistributedServices();
 

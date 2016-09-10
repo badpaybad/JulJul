@@ -6,9 +6,9 @@ namespace JulJul.AdminBusiness.Admin
     internal abstract class AbstractAdminServcies<T, TView> : IAdminServices<T, TView>, IAdminServciesSubscribeChange
         where T : IEntity, new() where TView : AbstractDetails<T, TView>, new()
     {
-        public DistributedServices DistriubtedServices { get; set; }
+        public IDistributedServices DistriubtedServices { get; set; }
 
-        public virtual void RegisterSubscribeChange(DistributedServices distributedServices)
+        public virtual void RegisterSubscribeChange(IDistributedServices distributedServices)
         {
             DistriubtedServices = distributedServices;
 

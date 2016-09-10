@@ -10,9 +10,9 @@ namespace JulJul.Repository.Ef6
 {
     public abstract class EfAbstractRepository<T> : IRepository<T> where T : AbstractEntity, new()
     {
-        public DistributedServices DistributedServices { get; set; }
+        public IDistributedServices DistributedServices { get; set; }
 
-        public virtual void RegisterSubcribeChange(DistributedServices distributedServices)
+        public virtual void RegisterSubcribeChange(IDistributedServices distributedServices)
         {
             DistributedServices = distributedServices;
 
