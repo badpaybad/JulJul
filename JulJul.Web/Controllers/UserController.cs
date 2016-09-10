@@ -35,10 +35,25 @@ namespace JulJul.Web.Controllers
         public ActionResult Index(UserViewModel model
             ,string btnAdd,string btnSave,string btnDelete)
         {
-            var cmd = new DistributedEntityDetailsCommand<User,UserDetails>(model.User,DistributedDbCommandType.Add);
-
-            ServicesEngine.DistributedServices.EntityDetailsPublish(cmd);
-
+            if (!string.IsNullOrEmpty(btnAdd))
+            {
+                model.User.Id= Guid.NewGuid();
+                var cmd = new DistributedEntityDetailsCommand<User,UserDetails>(
+                    model.User,DistributedDbCommandType.Add);
+                ServicesEngine.DistributedServices.EntityDetailsPublish(cmd);
+            }
+            if (!string.IsNullOrEmpty(btnSave))
+            {
+                var cmd = new DistributedEntityDetailsCommand<User, UserDetails>(
+                    model.User, DistributedDbCommandType.Update);
+                ServicesEngine.DistributedServices.EntityDetailsPublish(cmd);
+            }
+            if (!string.IsNullOrEmpty(btnDelete))
+            {
+                var cmd = new DistributedEntityDetailsCommand<User, UserDetails>(
+                    model.User, DistributedDbCommandType.Delete);
+                ServicesEngine.DistributedServices.EntityDetailsPublish(cmd);
+            }
             model.List = _userServices.GetAll(LanguageId).ToList();
             return View(model);
         }

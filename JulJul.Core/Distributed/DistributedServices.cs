@@ -35,7 +35,8 @@ namespace JulJul.Core.Distributed
         private ISubscriber _subscriberDb;
         private ISubscriber _subscriber;
         private ISubscriber _subscriberDetails;
-
+        private IDatabase _dbQueue;
+        private IDatabase _dbStack;
 
         public DistributedServices()
         {
@@ -50,6 +51,8 @@ namespace JulJul.Core.Distributed
             _subscriberDb = RedisConnectionPool.CurrentConnectionMultiplexer.GetSubscriber();
             _subscriber = RedisConnectionPool.CurrentConnectionMultiplexer.GetSubscriber();
             _subscriberDetails = RedisConnectionPool.CurrentConnectionMultiplexer.GetSubscriber();
+            _dbQueue = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
+            _dbStack = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
         }
 
         public void EntityPublish<T>(DistributedEntityCommand<T> cmd) where T : IEntity
@@ -67,13 +70,11 @@ namespace JulJul.Core.Distributed
             switch (cmd.CommandBehavior)
             {
                 case CommandBehavior.Queue:
-                    var qdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
-                    qdb.ListRightPush(redisChannel, redisValue);
+                    _dbQueue.ListRightPush(redisChannel, redisValue);
                     _subscriber.Publish(redisChannel, redisValue);
                     break;
                 case CommandBehavior.Stack:
-                    var sdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
-                    sdb.ListRightPush(redisChannel, redisValue);
+                    _dbStack.ListRightPush(redisChannel, redisValue);
                     _subscriber.Publish(redisChannel, redisValue);
                     break;
                 default:
@@ -100,19 +101,19 @@ namespace JulJul.Core.Distributed
                 switch (cmd.CommandBehavior)
                 {
                     case CommandBehavior.Queue:
-                        var qdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
-                        var qv = qdb.ListLeftPop(redisChannel);
+                        var qv = _dbQueue.ListLeftPop(redisChannel);
                         if (qv.HasValue)
                         {
-                            callBack(redisChannel, JsonConvert.DeserializeObject<DistributedEntityCommand<T>>(qv));
+                            callBack(redisChannel, 
+                                JsonConvert.DeserializeObject<DistributedEntityCommand<T>>(qv));
                         }
                         break;
                     case CommandBehavior.Stack:
-                        var sdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
-                        var sv = sdb.ListRightPop(redisChannel);
+                        var sv = _dbStack.ListRightPop(redisChannel);
                         if (sv.HasValue)
                         {
-                            callBack(redisChannel, JsonConvert.DeserializeObject<DistributedEntityCommand<T>>(sv));
+                            callBack(redisChannel, 
+                                JsonConvert.DeserializeObject<DistributedEntityCommand<T>>(sv));
                         }
                         break;
                     default:
@@ -140,13 +141,11 @@ namespace JulJul.Core.Distributed
             switch (cmd.CommandBehavior)
             {
                 case CommandBehavior.Queue:
-                    var qdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
-                    qdb.ListRightPush(redisChannel, redisValue);
+                    _dbQueue.ListRightPush(redisChannel, redisValue);
                     _subscriber.Publish(redisChannel, redisValue);
                     break;
                 case CommandBehavior.Stack:
-                    var sdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
-                    sdb.ListRightPush(redisChannel, redisValue);
+                    _dbStack.ListRightPush(redisChannel, redisValue);
                     _subscriber.Publish(redisChannel, redisValue);
                     break;
                 default:
@@ -175,19 +174,19 @@ namespace JulJul.Core.Distributed
                 switch (cmd.CommandBehavior)
                 {
                     case CommandBehavior.Queue:
-                        var qdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
-                        var qv = qdb.ListLeftPop(redisChannel);
+                        var qv = _dbQueue.ListLeftPop(redisChannel);
                         if (qv.HasValue)
                         {
-                            callBack(redisChannel, JsonConvert.DeserializeObject<DistributedEntityDetailsCommand<T, TView>>(qv));
+                            callBack(redisChannel,
+                                JsonConvert.DeserializeObject<DistributedEntityDetailsCommand<T, TView>>(qv));
                         }
                         break;
                     case CommandBehavior.Stack:
-                        var sdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
-                        var sv = sdb.ListRightPop(redisChannel);
+                        var sv = _dbStack.ListRightPop(redisChannel);
                         if (sv.HasValue)
                         {
-                            callBack(redisChannel, JsonConvert.DeserializeObject<DistributedEntityDetailsCommand<T, TView>>(sv));
+                            callBack(redisChannel,
+                                JsonConvert.DeserializeObject<DistributedEntityDetailsCommand<T, TView>>(sv));
                         }
                         break;
                     default:
@@ -213,20 +212,18 @@ namespace JulJul.Core.Distributed
             switch (cmd.CommandBehavior)
             {
                 case CommandBehavior.Queue:
-                    var qdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
-                    qdb.ListRightPush(redisChannel, redisValue);
+                    _dbQueue.ListRightPush(redisChannel, redisValue);
                     _subscriber.Publish(redisChannel, redisValue);
                     break;
                 case CommandBehavior.Stack:
-                    var sdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
-                    sdb.ListRightPush(redisChannel, redisValue);
+                    _dbStack.ListRightPush(redisChannel, redisValue);
                     _subscriber.Publish(redisChannel, redisValue);
                     break;
                 default:
                     _subscriber.Publish(redisChannel, redisValue);
                     break;
             }
-            
+
             Console.WriteLine("\r\nCommand:pushed:" + redisChannel + "\r\n" + redisValue);
         }
 
@@ -247,19 +244,19 @@ namespace JulJul.Core.Distributed
                 switch (cmd.CommandBehavior)
                 {
                     case CommandBehavior.Queue:
-                        var qdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
-                        var qv = qdb.ListLeftPop(redisChannel);
+                        var qv = _dbQueue.ListLeftPop(redisChannel);
                         if (qv.HasValue)
                         {
-                            callBack(redisChannel, JsonConvert.DeserializeObject<DistributedCommand<T>>(qv));
+                            callBack(redisChannel, 
+                                JsonConvert.DeserializeObject<DistributedCommand<T>>(qv));
                         }
                         break;
                     case CommandBehavior.Stack:
-                        var sdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
-                        var sv = sdb.ListRightPop(redisChannel);
+                        var sv = _dbStack.ListRightPop(redisChannel);
                         if (sv.HasValue)
                         {
-                            callBack(redisChannel, JsonConvert.DeserializeObject<DistributedCommand<T>>(sv));
+                            callBack(redisChannel, 
+                                JsonConvert.DeserializeObject<DistributedCommand<T>>(sv));
                         }
                         break;
                     default:
