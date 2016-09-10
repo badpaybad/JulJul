@@ -14,7 +14,7 @@ namespace JulJul.AdminBusiness.Admin
 
             DistriubtedServices.EntityDetailsSubcribe<T, TView>((channel, cmd) =>
             {
-                switch (cmd.CommandType)
+                switch (cmd.DbCommandType)
                 {
                     case DistributedDbCommandType.Add:
                         Create(cmd.Data);

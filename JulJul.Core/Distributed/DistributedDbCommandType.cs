@@ -7,4 +7,11 @@ namespace JulJul.Core.Distributed
         Update,
         Delete
     }
+
+    public enum CommandBehavior
+    {
+        PubSub,
+        Queue,
+        Stack
+    }
 }

@@ -6,7 +6,8 @@ namespace JulJul.Core.Distributed
 {
     public class DistributedEntityDetailsCommand<T,TView> where T : IEntity, new() where TView : AbstractDetails<T, TView>
     {
-        public DistributedDbCommandType CommandType { get; set; }
+        public CommandBehavior CommandBehavior { get; set; }
+        public DistributedDbCommandType DbCommandType { get; set; }
         public TView Data { get; set; }
 
         public Type DataType
@@ -18,10 +19,12 @@ namespace JulJul.Core.Distributed
             }
         }
 
-        public DistributedEntityDetailsCommand(TView data, DistributedDbCommandType cmdType)
+        public DistributedEntityDetailsCommand(TView data, DistributedDbCommandType cmdType, 
+            CommandBehavior cmdBehavior = CommandBehavior.Queue)
         {
             Data = data;
-            CommandType = cmdType;
+            DbCommandType = cmdType;
+            CommandBehavior = cmdBehavior;
         }
 
         public string ToJson()

@@ -6,6 +6,7 @@ namespace JulJul.Core.Distributed
 {
     public class DistributedCommand<T> where T:class 
     {
+        public CommandBehavior CommandBehavior { get; set; }
         public T Data { get; set; }
         public Type DataType
         {
@@ -16,9 +17,10 @@ namespace JulJul.Core.Distributed
             }
         }
 
-        public DistributedCommand(T data)
+        public DistributedCommand(T data, CommandBehavior cmdBehavior= CommandBehavior.Queue)
         {
             Data = data;
+            CommandBehavior = cmdBehavior;
         }
 
         public string ToJson()

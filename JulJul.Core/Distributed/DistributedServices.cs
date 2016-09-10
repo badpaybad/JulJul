@@ -36,6 +36,7 @@ namespace JulJul.Core.Distributed
         private ISubscriber _subscriber;
         private ISubscriber _subscriberDetails;
 
+
         public DistributedServices()
         {
             var configRedisInstance = new RedisConfig()
@@ -51,79 +52,7 @@ namespace JulJul.Core.Distributed
             _subscriberDetails = RedisConnectionPool.CurrentConnectionMultiplexer.GetSubscriber();
         }
 
-        public void EntitySubcribe<T>(Action<string, DistributedEntityCommand<T>> callBack) where T : IEntity
-        {
-            var redisChannel = typeof(T).FullName;
-            if (!_subscriber.IsConnected(redisChannel))
-            {
-                var err = "Can not connect to pubsub services";
-                Console.WriteLine(err);
-                throw new Exception(err);
-            }
-
-            _subscriberDb.Subscribe(redisChannel, (channel, value) =>
-            {
-                var cmd = JsonConvert.DeserializeObject<DistributedEntityCommand<T>>(value);
-                callBack(channel, cmd);
-
-                Console.WriteLine("\r\nDbCommand:done:" + channel + "\r\n" + value);
-            });
-        }
-
         public void EntityPublish<T>(DistributedEntityCommand<T> cmd) where T : IEntity
-        {
-            var redisChannel = typeof(T).FullName;
-            if (!_subscriber.IsConnected(redisChannel))
-            {
-                var err = "Can not connect to pubsub services";
-                Console.WriteLine(err);
-                throw new Exception(err);
-            }
-
-            var redisValue = cmd.ToJson();
-             _subscriberDb.Publish(redisChannel, redisValue);
-
-            Console.WriteLine("\r\nDbCommand:pushed:" + redisChannel + "\r\n" + redisValue);
-        }
-
-        public void EntityDetailsPublish<T, TView>(DistributedEntityDetailsCommand<T, TView> cmd)
-            where T : IEntity, new() where TView : AbstractDetails<T, TView>
-        {
-            var redisChannel = typeof(TView).FullName;
-            if (!_subscriber.IsConnected(redisChannel))
-            {
-                var err = "Can not connect to pubsub services";
-                Console.WriteLine(err);
-                throw new Exception(err);
-            }
-
-            var redisValue = cmd.ToJson();
-            _subscriberDetails.Publish(redisChannel, redisValue);
-
-            Console.WriteLine("\r\nFrontEndCommand:pushed:" + redisChannel + "\r\n" + redisValue);
-        }
-
-        public void EntityDetailsSubcribe<T, TView>(Action<string, DistributedEntityDetailsCommand<T, TView>> callBack)
-            where T : IEntity, new() where TView : AbstractDetails<T, TView>
-        {
-            var redisChannel = typeof(TView).FullName;
-            if (!_subscriber.IsConnected(redisChannel))
-            {
-                var err = "Can not connect to pubsub services";
-                Console.WriteLine(err);
-                throw new Exception(err);
-            }
-
-            _subscriberDetails.Subscribe(redisChannel, (channel, value) =>
-            {
-                var cmd = JsonConvert.DeserializeObject<DistributedEntityDetailsCommand<T, TView>>(value);
-                callBack(channel, cmd);
-                Console.WriteLine("\r\nFrontEndCommand:done:" + channel + "\r\n" + value);
-            });
-        }
-
-
-        public void Publish<T>(DistributedCommand<T> cmd) where T : class
         {
             var redisChannel = typeof (T).FullName;
             if (!_subscriber.IsConnected(redisChannel))
@@ -134,14 +63,176 @@ namespace JulJul.Core.Distributed
             }
 
             var redisValue = cmd.ToJson();
-            _subscriber.Publish(redisChannel, redisValue);
 
+            switch (cmd.CommandBehavior)
+            {
+                case CommandBehavior.Queue:
+                    var qdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
+                    qdb.ListRightPush(redisChannel, redisValue);
+                    _subscriber.Publish(redisChannel, redisValue);
+                    break;
+                case CommandBehavior.Stack:
+                    var sdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
+                    sdb.ListRightPush(redisChannel, redisValue);
+                    _subscriber.Publish(redisChannel, redisValue);
+                    break;
+                default:
+                    _subscriber.Publish(redisChannel, redisValue);
+                    break;
+            }
+            Console.WriteLine("\r\nDbCommand:pushed:" + redisChannel + "\r\n" + redisValue);
+        }
+
+        public void EntitySubcribe<T>(Action<string, DistributedEntityCommand<T>> callBack) where T : IEntity
+        {
+            var redisChannel = typeof (T).FullName;
+            if (!_subscriber.IsConnected(redisChannel))
+            {
+                var err = "Can not connect to pubsub services";
+                Console.WriteLine(err);
+                throw new Exception(err);
+            }
+
+            _subscriberDb.Subscribe(redisChannel, (channel, value) =>
+            {
+                var cmd = JsonConvert.DeserializeObject<DistributedEntityCommand<T>>(value);
+
+                switch (cmd.CommandBehavior)
+                {
+                    case CommandBehavior.Queue:
+                        var qdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
+                        var qv = qdb.ListLeftPop(redisChannel);
+                        if (qv.HasValue)
+                        {
+                            callBack(redisChannel, JsonConvert.DeserializeObject<DistributedEntityCommand<T>>(qv));
+                        }
+                        break;
+                    case CommandBehavior.Stack:
+                        var sdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
+                        var sv = sdb.ListRightPop(redisChannel);
+                        if (sv.HasValue)
+                        {
+                            callBack(redisChannel, JsonConvert.DeserializeObject<DistributedEntityCommand<T>>(sv));
+                        }
+                        break;
+                    default:
+                        callBack(channel, cmd);
+                        break;
+                }
+
+                Console.WriteLine("\r\nDbCommand:done:" + channel + "\r\n" + value);
+            });
+        }
+
+        public void EntityDetailsPublish<T, TView>(DistributedEntityDetailsCommand<T, TView> cmd)
+            where T : IEntity, new() where TView : AbstractDetails<T, TView>
+        {
+            var redisChannel = typeof (TView).FullName;
+            if (!_subscriber.IsConnected(redisChannel))
+            {
+                var err = "Can not connect to pubsub services";
+                Console.WriteLine(err);
+                throw new Exception(err);
+            }
+
+            var redisValue = cmd.ToJson();
+
+            switch (cmd.CommandBehavior)
+            {
+                case CommandBehavior.Queue:
+                    var qdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
+                    qdb.ListRightPush(redisChannel, redisValue);
+                    _subscriber.Publish(redisChannel, redisValue);
+                    break;
+                case CommandBehavior.Stack:
+                    var sdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
+                    sdb.ListRightPush(redisChannel, redisValue);
+                    _subscriber.Publish(redisChannel, redisValue);
+                    break;
+                default:
+                    _subscriber.Publish(redisChannel, redisValue);
+                    break;
+            }
+
+            Console.WriteLine("\r\nFrontEndCommand:pushed:" + redisChannel + "\r\n" + redisValue);
+        }
+
+        public void EntityDetailsSubcribe<T, TView>(Action<string, DistributedEntityDetailsCommand<T, TView>> callBack)
+            where T : IEntity, new() where TView : AbstractDetails<T, TView>
+        {
+            var redisChannel = typeof (TView).FullName;
+            if (!_subscriber.IsConnected(redisChannel))
+            {
+                var err = "Can not connect to pubsub services";
+                Console.WriteLine(err);
+                throw new Exception(err);
+            }
+
+            _subscriberDetails.Subscribe(redisChannel, (channel, value) =>
+            {
+                var cmd = JsonConvert.DeserializeObject<DistributedEntityDetailsCommand<T, TView>>(value);
+
+                switch (cmd.CommandBehavior)
+                {
+                    case CommandBehavior.Queue:
+                        var qdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
+                        var qv = qdb.ListLeftPop(redisChannel);
+                        if (qv.HasValue)
+                        {
+                            callBack(redisChannel, JsonConvert.DeserializeObject<DistributedEntityDetailsCommand<T, TView>>(qv));
+                        }
+                        break;
+                    case CommandBehavior.Stack:
+                        var sdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
+                        var sv = sdb.ListRightPop(redisChannel);
+                        if (sv.HasValue)
+                        {
+                            callBack(redisChannel, JsonConvert.DeserializeObject<DistributedEntityDetailsCommand<T, TView>>(sv));
+                        }
+                        break;
+                    default:
+                        callBack(channel, cmd);
+                        break;
+                }
+
+                Console.WriteLine("\r\nFrontEndCommand:done:" + channel + "\r\n" + value);
+            });
+        }
+
+        public void Publish<T>(DistributedCommand<T> cmd) where T : class
+        {
+            var redisChannel = typeof (T).FullName;
+            if (!_subscriber.IsConnected(redisChannel))
+            {
+                var err = "Can not connect to pubsub services";
+                Console.WriteLine(err);
+                throw new Exception(err);
+            }
+            var redisValue = cmd.ToJson();
+
+            switch (cmd.CommandBehavior)
+            {
+                case CommandBehavior.Queue:
+                    var qdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
+                    qdb.ListRightPush(redisChannel, redisValue);
+                    _subscriber.Publish(redisChannel, redisValue);
+                    break;
+                case CommandBehavior.Stack:
+                    var sdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
+                    sdb.ListRightPush(redisChannel, redisValue);
+                    _subscriber.Publish(redisChannel, redisValue);
+                    break;
+                default:
+                    _subscriber.Publish(redisChannel, redisValue);
+                    break;
+            }
+            
             Console.WriteLine("\r\nCommand:pushed:" + redisChannel + "\r\n" + redisValue);
         }
 
         public void Subscribe<T>(Action<string, DistributedCommand<T>> callBack) where T : class
         {
-            var redisChannel = typeof(T).FullName;
+            var redisChannel = typeof (T).FullName;
             if (!_subscriber.IsConnected(redisChannel))
             {
                 var err = "Can not connect to pubsub services";
@@ -152,7 +243,29 @@ namespace JulJul.Core.Distributed
             _subscriber.Subscribe(redisChannel, (channel, value) =>
             {
                 var cmd = JsonConvert.DeserializeObject<DistributedCommand<T>>(value);
-                callBack(channel, cmd);
+
+                switch (cmd.CommandBehavior)
+                {
+                    case CommandBehavior.Queue:
+                        var qdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
+                        var qv = qdb.ListLeftPop(redisChannel);
+                        if (qv.HasValue)
+                        {
+                            callBack(redisChannel, JsonConvert.DeserializeObject<DistributedCommand<T>>(qv));
+                        }
+                        break;
+                    case CommandBehavior.Stack:
+                        var sdb = RedisConnectionPool.CurrentConnectionMultiplexer.GetDatabase();
+                        var sv = sdb.ListRightPop(redisChannel);
+                        if (sv.HasValue)
+                        {
+                            callBack(redisChannel, JsonConvert.DeserializeObject<DistributedCommand<T>>(sv));
+                        }
+                        break;
+                    default:
+                        callBack(channel, cmd);
+                        break;
+                }
 
                 Console.WriteLine("\r\nCommand:done:" + channel + "\r\n" + value);
             });

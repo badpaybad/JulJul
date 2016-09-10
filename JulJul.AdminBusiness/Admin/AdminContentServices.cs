@@ -117,7 +117,7 @@ namespace JulJul.AdminBusiness.Admin
 
             DistriubtedServices.EntityDetailsSubcribe<Content,ContentDetails>((s, cmd) =>
             {
-                switch (cmd.CommandType)
+                switch (cmd.DbCommandType)
                 {
                         case DistributedDbCommandType.Add:
                         CreateOrEdit(cmd.Data);

@@ -18,7 +18,7 @@ namespace JulJul.Repository.Ef6
 
             DistributedServices.EntitySubcribe<T>((channel, cmd) =>
             {
-                switch (cmd.CommandType)
+                switch (cmd.DbCommandType)
                 {
                         case DistributedDbCommandType.Add:
                         TryInsert(cmd.Data);
