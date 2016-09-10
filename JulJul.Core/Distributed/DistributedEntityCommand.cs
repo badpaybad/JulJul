@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace JulJul.Core.Distributed
 {
-    public class DistributedDbCommand<T> where T:IEntity
+    public class DistributedEntityCommand<T> where T:IEntity
     {
         public DistributedDbCommandType CommandType { get; set; }
         public T Data { get; set; }
@@ -22,7 +22,7 @@ namespace JulJul.Core.Distributed
             }
         }
 
-        public DistributedDbCommand(T data, DistributedDbCommandType cmdType)
+        public DistributedEntityCommand(T data, DistributedDbCommandType cmdType)
         {
             Data = data;
             CommandType = cmdType;

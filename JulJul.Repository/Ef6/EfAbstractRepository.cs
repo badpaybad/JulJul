@@ -16,7 +16,7 @@ namespace JulJul.Repository.Ef6
         {
             DistributedServices = distributedServices;
 
-            DistributedServices.DbSubcribe<T>((channel, cmd) =>
+            DistributedServices.EntitySubcribe<T>((channel, cmd) =>
             {
                 switch (cmd.CommandType)
                 {

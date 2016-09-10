@@ -33,7 +33,7 @@ namespace JulJul.UnitTest
         {
             var repo=new UserRepository();
             var entity = new User() { Username = "badpaybad", Password = "123456"};
-           // DistributedServices.Instance.DbPublish(new DistributedDbCommand<User>(entity, DistributedDbCommandType.Add));
+           // DistributedServices.Instance.EntityPublish(new DistributedEntityCommand<User>(entity, DistributedDbCommandType.Add));
            // repo.TryInsert(entity);
 
             Thread.Sleep(5000);

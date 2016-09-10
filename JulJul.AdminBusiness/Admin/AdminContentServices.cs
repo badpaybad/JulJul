@@ -76,7 +76,7 @@ namespace JulJul.AdminBusiness.Admin
             {
                 if (deleted)
                 {
-                    DistriubtedServices.DbPublish(new DistributedDbCommand<Content>(ml, DistributedDbCommandType.Delete));
+                    DistriubtedServices.EntityPublish(new DistributedEntityCommand<Content>(ml, DistributedDbCommandType.Delete));
                     //_repository.TryDelete(ml);
                 }
                 else
@@ -85,7 +85,7 @@ namespace JulJul.AdminBusiness.Admin
                     if (!contentLanguages.TryGetValue(ml.Field, out val)) continue;
 
                     ml.Value = val;
-                    DistriubtedServices.DbPublish(new DistributedDbCommand<Content>(ml, DistributedDbCommandType.Update));
+                    DistriubtedServices.EntityPublish(new DistributedEntityCommand<Content>(ml, DistributedDbCommandType.Update));
                     //_repository.TryUpdate(ml);
                 }
             }
@@ -103,7 +103,7 @@ namespace JulJul.AdminBusiness.Admin
                     Field = data.Key,
                     Value = data.Value
                 };
-                DistriubtedServices.DbPublish(new DistributedDbCommand<Content>(content, DistributedDbCommandType.Add));
+                DistriubtedServices.EntityPublish(new DistributedEntityCommand<Content>(content, DistributedDbCommandType.Add));
                 //_repository.TryInsert(content);
             }
         }

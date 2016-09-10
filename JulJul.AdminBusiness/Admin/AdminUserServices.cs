@@ -22,7 +22,7 @@ namespace JulJul.AdminBusiness.Admin
             Dictionary<string, string> contentFields;
             var entity = userDetails.ConvertToEntity(out contentFields);
             //_repository.TryInsert(entity);
-            DistriubtedServices.DbPublish(new DistributedDbCommand<User>(entity, DistributedDbCommandType.Add));
+            DistriubtedServices.EntityPublish(new DistributedEntityCommand<User>(entity, DistributedDbCommandType.Add));
             _contentServices.CreateOrEdit(userDetails);
         }
 
@@ -31,7 +31,7 @@ namespace JulJul.AdminBusiness.Admin
             Dictionary<string, string> contentFields;
             var entity = userDetails.ConvertToEntity(out contentFields);
             //_repository.TryInsert(entity);
-            DistriubtedServices.DbPublish(new DistributedDbCommand<User>(entity, DistributedDbCommandType.Update));
+            DistriubtedServices.EntityPublish(new DistributedEntityCommand<User>(entity, DistributedDbCommandType.Update));
             _contentServices.CreateOrEdit(userDetails);
         }
 
@@ -40,7 +40,7 @@ namespace JulJul.AdminBusiness.Admin
             Dictionary<string, string> contentFields;
             var entity = userDetails.ConvertToEntity(out contentFields);
             //_repository.TryInsert(entity);
-            DistriubtedServices.DbPublish(new DistributedDbCommand<User>(entity, DistributedDbCommandType.Delete));
+            DistriubtedServices.EntityPublish(new DistributedEntityCommand<User>(entity, DistributedDbCommandType.Delete));
             _contentServices.CreateOrEdit(userDetails);
         }
         

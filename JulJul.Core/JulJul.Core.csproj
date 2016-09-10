@@ -51,7 +51,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AbstractDetails.cs" />
-    <Compile Include="Distributed\DistributedDbCommand.cs" />
+    <Compile Include="Distributed\DistributedCommand.cs" />
+    <Compile Include="Distributed\DistributedEntityCommand.cs" />
     <Compile Include="Distributed\DistributedDbCommandType.cs" />
     <Compile Include="Distributed\DistributedEntityDetailsCommand.cs" />
     <Compile Include="Distributed\DistributedServices.cs" />

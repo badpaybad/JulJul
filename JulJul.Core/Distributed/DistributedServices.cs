@@ -7,7 +7,7 @@ namespace JulJul.Core.Distributed
 {
     public class DistributedServices
     {
-        //static DistributedServices _instance=new DistributedServices();
+        //static DistributedServices _instance = new DistributedServices();
 
         //public static DistributedServices Instance
         //{
@@ -17,7 +17,9 @@ namespace JulJul.Core.Distributed
         //    }
         //}
 
+        private ISubscriber _subscriberDb;
         private ISubscriber _subscriber;
+        private ISubscriber _subscriberDetails;
 
         public DistributedServices()
         {
@@ -29,26 +31,28 @@ namespace JulJul.Core.Distributed
             };
             RedisConnectionPool.Boot(configRedisInstance);
 
+            _subscriberDb = RedisConnectionPool.CurrentConnectionMultiplexer.GetSubscriber();
             _subscriber = RedisConnectionPool.CurrentConnectionMultiplexer.GetSubscriber();
+            _subscriberDetails = RedisConnectionPool.CurrentConnectionMultiplexer.GetSubscriber();
         }
-        public void DbSubcribe<T>(Action<string,DistributedDbCommand<T>> callBack) where T : IEntity
+        public void EntitySubcribe<T>(Action<string,DistributedEntityCommand<T>> callBack) where T : IEntity
         {
-            _subscriber.Subscribe(typeof(T).FullName, (channel, value) =>
+            _subscriberDb.Subscribe(typeof(T).FullName, (channel, value) =>
             {
-                var cmd = JsonConvert.DeserializeObject<DistributedDbCommand<T>>(value);
+                var cmd = JsonConvert.DeserializeObject<DistributedEntityCommand<T>>(value);
                 callBack(channel, cmd);
 
-                Console.WriteLine("DbCommand:done:" + channel + "\r\n" + value);
+                Console.WriteLine("\r\nDbCommand:done:" + channel + "\r\n" + value);
             });
         }
 
-        public void DbPublish<T>(DistributedDbCommand<T> cmd) where T : IEntity
+        public void EntityPublish<T>(DistributedEntityCommand<T> cmd) where T : IEntity
         {
             var redisValue = cmd.ToJson();
             var redisChannel = typeof (T).FullName;
-            _subscriber.Publish(redisChannel, redisValue);
+            _subscriberDb.Publish(redisChannel, redisValue);
 
-            Console.WriteLine("DbCommand:pushed:"+redisChannel+"\r\n"+ redisValue);
+            Console.WriteLine("\r\nDbCommand:pushed:" + redisChannel+"\r\n"+ redisValue);
         }
 
         public void EntityDetailsPublish<T, TView>(DistributedEntityDetailsCommand<T, TView> cmd)
@@ -56,20 +60,42 @@ namespace JulJul.Core.Distributed
         {
             var redisChannel = typeof(TView).FullName;
             var redisValue = cmd.ToJson();
-            _subscriber.Publish(redisChannel, redisValue);
+            _subscriberDetails.Publish(redisChannel, redisValue);
 
-            Console.WriteLine("FrontEndCommand:pushed:" + redisChannel + "\r\n" + redisValue);
+            Console.WriteLine("\r\nFrontEndCommand:pushed:" + redisChannel + "\r\n" + redisValue);
         }
 
         public void EntityDetailsSubcribe<T, TView>(Action<string,DistributedEntityDetailsCommand<T, TView>> callBack )
             where T : IEntity, new() where TView : AbstractDetails<T, TView>
         {
-            _subscriber.Subscribe(typeof(TView).FullName, (channel, value) =>
+            _subscriberDetails.Subscribe(typeof(TView).FullName, (channel, value) =>
             {
                 var cmd = JsonConvert.DeserializeObject<DistributedEntityDetailsCommand<T,TView>>(value);
                 callBack(channel, cmd);
-                Console.WriteLine("FrontEndCommand:done:" + channel + "\r\n" + value);
+                Console.WriteLine("\r\nFrontEndCommand:done:" + channel + "\r\n" + value);
             });
         }
+
+
+        public void Publish<T>(DistributedCommand<T> cmd) where T : class
+        {
+            var redisChannel = typeof(T).FullName;
+            var redisValue = cmd.ToJson();
+            _subscriber.Publish(redisChannel, redisValue);
+
+            Console.WriteLine("\r\nCommand:pushed:" + redisChannel + "\r\n" + redisValue);
+        }
+
+        public void Subscribe<T>(Action<string, DistributedCommand<T>> callBack) where T : class
+        {
+            _subscriber.Subscribe(typeof(T).FullName, (channel, value) =>
+            {
+                var cmd = JsonConvert.DeserializeObject<DistributedCommand<T>>(value);
+                callBack(channel, cmd);
+
+                Console.WriteLine("\r\nCommand:done:" + channel + "\r\n" + value);
+            });
+        }
+
     }
 }
