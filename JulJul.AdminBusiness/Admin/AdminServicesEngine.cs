@@ -8,10 +8,11 @@ namespace JulJul.AdminBusiness.Admin
     public static class AdminServicesEngine
     {
         static Dictionary<Type, object> _map = new Dictionary<Type, object>();
-        static DistributedServices _distributedServices = new DistributedServices();
+        public static DistributedServices DistributedServices ;
 
         static AdminServicesEngine()
         {
+            DistributedServices = new DistributedServices();
             lock (_map)
             {
                 var adminContentServices = new AdminContentServices(RepositoryEngine.Resolve<IContentRepository>());
@@ -27,7 +28,7 @@ namespace JulJul.AdminBusiness.Admin
             {
                 var s = m.Value as IAdminServciesSubscribeChange;
 
-                s.RegisterSubscribeChange(_distributedServices);
+                s.RegisterSubscribeChange(DistributedServices);
             }
         }
     }

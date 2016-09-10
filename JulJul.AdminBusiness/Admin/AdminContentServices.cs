@@ -11,6 +11,8 @@ namespace JulJul.AdminBusiness.Admin
 {
     internal class AdminContentServices: IAdminServciesSubscribeChange
     {
+        public DistributedServices DistriubtedServices { get; set; }
+
         private IContentRepository _repository;
         public AdminContentServices(IContentRepository repository)
         {
@@ -108,8 +110,7 @@ namespace JulJul.AdminBusiness.Admin
             }
         }
 
-        public DistributedServices DistriubtedServices { get; set; }
-
+      
         public void RegisterSubscribeChange(DistributedServices distributedServices)
         {
             DistriubtedServices = distributedServices;
@@ -125,7 +126,7 @@ namespace JulJul.AdminBusiness.Admin
                         CreateOrEdit(cmd.Data);
                         break;
                     case DistributedDbCommandType.Delete:
-                        
+                        Delete(cmd.Data);
                         break;
                 }
             });

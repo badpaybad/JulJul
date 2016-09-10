@@ -8,7 +8,7 @@ namespace JulJul.AdminBusiness.Admin
     {
         public DistributedServices DistriubtedServices { get; set; }
 
-        public void RegisterSubscribeChange(DistributedServices distributedServices)
+        public virtual void RegisterSubscribeChange(DistributedServices distributedServices)
         {
             DistriubtedServices = distributedServices;
 

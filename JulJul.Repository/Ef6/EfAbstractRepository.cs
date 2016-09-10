@@ -12,7 +12,7 @@ namespace JulJul.Repository.Ef6
     {
         public DistributedServices DistributedServices { get; set; }
 
-        public void RegisterSubcribeChange(DistributedServices distributedServices)
+        public virtual void RegisterSubcribeChange(DistributedServices distributedServices)
         {
             DistributedServices = distributedServices;
 
